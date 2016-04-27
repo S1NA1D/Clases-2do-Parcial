@@ -1,0 +1,70 @@
+install.packages("fpp")
+library(fpp)
+library(forecast)
+tasas<- ts(read.csv("C:\\Users\\SALA-C30\\Desktop\\Tasas.csv", header = TRUE), frequency = 4, start = 2005)
+tasa1<-ts(tasas[,1],start=2005,frequency=4)
+View(tasas)
+plot(tasas)
+Acf(tasas)
+#meanf (part, h)
+tasa1pro<- meanf(tasa1,4)
+plot(tasa1)
+#tasa1 es la ST, el numero de datos a proyectar en este caso elegi h=4
+
+#---------------- M E T O D O    I N G E N U O --------------------#
+tasa1_ing<-naive(tasa1,4)
+plot(tasa1_ing)
+rwf(tasa1,3) #Alternativo
+
+#---------------- M E T O D O   I N G E N U O   E S T A C I O N A L ----------------#
+tasa1_ingd<-snaive(tasa1,4)
+tasa1_ingd
+plot(tasa1_ingd)
+help(snaive)
+
+#---------------- M E T O D O   D E   L A  D E R I V A ----------------#
+tasa1_der<-rwf(tasa1,4,drift=TRUE)
+tasa1_der
+plot(tasa1_der)
+#rwf(st, h, drift=TRUE)
+
+########################################################################
+tasa1part<-window(tasa1,stat=2005,end=2010)
+tasa1part1<-meanf(tasa1part,h=4)
+tasa1part2<-naive(tasa1part,h=4)
+tasa1part3<-snaive(tasa1part,h=4)
+
+plot(tasa1, plot.conf=FALSE, xlim=c(2005,2011), 
+     main="Proyección tasas de desempleo trimestre")
+lines(tasa1part1$mean,col=2)
+lines(tasa1part2$mean,col=3)
+lines(tasa1part3$mean,col=4)
+legend("topleft",lty=1,col=c(1,2,3),
+       legend=c("metodo media","metodo ingenuo","metodo ingenuo estacional"))
+
+install.packages("fpp")
+library (fpp)
+pib <- read.csv ("C:\\Users\\SALA-C30\\Desktop\\pib1.csv",header = T)
+pibts<- ts(pib [,1],start = 1993, frequency = 4)
+View(pibts)
+plot(pibts)
+Acf(pibts)
+
+pibpro<- meanf (pibts,4)
+plot(pibpro)
+pibnaive<- naive (pibts,4)
+plot(pibnaive)
+pibsnaive<-snaive(pibts,4)
+plot(pibsnaive)
+pibrwf<-rwf(pibts,4, drift = TRUE)
+plot(pibrwf)
+
+evalmed<-accuracy(pibpro)
+evaling<-accuracy(pibnaive)
+evalsnai<-accuracy(pibsnaive)
+evalder<-accuracy(pibrwf)
+
+evalmed
+evaling
+evalsnai
+evalder
