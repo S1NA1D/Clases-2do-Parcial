@@ -1,0 +1,75 @@
+#Ejercicio del 18 de mayo del 2016
+install.packages("fpp")
+install.packages("forecast")
+library()
+library(fpp)
+library(forecast)
+
+
+#Importamos nuestras 2 series de tiempo, una con tendencia postiva y otra negativa
+
+azteca_ci<- ts(read.csv("C:\\Users\\EDITH VELAZQUEZ\\Desktop\\examencasero\\tv azteca cierre.csv", header = FALSE), frequency = 252, start = 2003)
+plot(azteca_ci,main="azteca cierre",xlab="tiempo",ylab="precios de cierre",col="orange")
+
+inbursa_ci<- ts(read.csv("C:\\Users\\EDITH VELAZQUEZ\\Desktop\\examencasero\\grupo inbursa cierre.csv", header = FALSE), frequency = 252, start = 2003)
+plot(inbursa_ci,main="inbursa cierre",xlab="tiempo",ylab="precios de cierre",col="orange")
+
+
+#Realizar con las dos series de tiempo una con tendencia positiva y otra con tendencia negativa para los 4 modelos vistos en clase
+
+#Serie de tiempo Con Tendencia Positiva
+#En este caso trabajaremos con los precios de cierre de la empresa Inbursa, sin embargo para un mejor tratamiento de los modelos
+#cortaremos esta serie hasta el 2011, pues apartir de este año su tendencia cambia a la baja.
+inbursa<- window(inbursa_ci,start=2003,end = 2011)
+plot(inbursa,xlab="Tiempo",ylab="Tasa", col="blue")
+
+#Aplicando Tendencia lineal de Holt
+inbursaHL<- holt(inbursa,initial="simple",h=4)
+plot(inbursaHL)
+#Aplicando Holt exponencial
+inbursaHE<- holt(inbursa,initial = "simple",exponential = T,h=4)
+
+#Aplicando Tendencia Aditiva Amortiguado
+inbursaAA<- holt(inbursa,damped = T)
+
+#Aplicando Tendencia Multiplicativa Amortiguado
+inbursaMA<- holt(inbursa,exponential = T,damped = T)
+
+#Construimos una gráfica con las 5 series dentro de ella.
+plot(inbursa, plot.conf=FALSE,main="Precio de Cierre Inbursa")
+lines(fitted(inbursaHL),col=2,lty=1)
+lines(fitted(inbursaHE),col=3,lty=2)
+lines(fitted(inbursaAA),col=4,lty=3)
+lines(fitted(inbursaMA),col=5,lty=4)
+
+legend("topleft",lty=4,col = c(1,2,3,4),legend=c("Holt Lineal","Holt Exponencial","Aditivo Amortiguado","Multiplicativo Amortiguado"))
+
+
+#-------------------------------------------
+
+#Serie de tiempo Con Tendencia Negativa
+#En este caso trabajaremos con los precios de cierre de la empresa Tv Azteca, sin embargo para un mejor tratamiento de los modelos
+#cortaremos esta serie del 2015 al 2016.
+azteca<- window(azteca_ci,start=2015,end = 2016)
+plot(azteca,xlab="Tiempo",ylab="Tasa", col="blue")
+
+#Aplicando Tendencia lineal de Holt
+aztecaHL<- holt(azteca,initial="simple",h=4)
+plot(aztecaHL)
+#Aplicando Holt exponencial
+aztecaHE<- holt(azteca,initial = "simple",exponential = T,h=4)
+
+#Aplicando Tendencia Aditiva Amortiguado
+aztecaAA<- holt(azteca,damped = T)
+
+#Aplicando Tendencia Multiplicativa Amortiguado
+aztecaMA<- holt(azteca,exponential = T,damped = T)
+
+#Construimos una gráfica con las 5 series dentro de ella.
+plot(azteca, plot.conf=FALSE,main="Precio de Cierre Azteca")
+lines(fitted(aztecaHL),col=2,lty=1)
+lines(fitted(aztecaHE),col=3,lty=2)
+lines(fitted(aztecaAA),col=4,lty=3)
+lines(fitted(aztecaMA),col=5,lty=4)
+
+legend("topleft",lty=4,col = c(1,2,3,4),legend=c("Holt Lineal","Holt Exponencial","Aditivo Amortiguado","Multiplicativo Amortiguado"))
