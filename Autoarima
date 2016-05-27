@@ -1,0 +1,31 @@
+#------- E J E R C I C I O ------------
+require(fpp)
+help("auto.arima")
+#Elegir una serie de tiempo
+desempleo <- read.csv ("C://Users//EDITH VELAZQUEZ//Videos//fwdexamencasero//desempleo.csv", header = FALSE)
+mex <- ts(desempleo [,1], start  = 2005, frequency = 4)
+df <- ts(desempleo [,2], start  = 2005, frequency = 4)
+
+mod <- auto.arima(mex,3,1,0)
+mod1 <- auto.arima(mex, seasonal=FALSE)
+mod2 <- auto.arima(df, seasonal=FALSE)
+
+pro<- forecast(mod,h=4)
+pro1<- forecast (mod1, h=4)
+pro2<- forecast (mod2, h=4)
+
+fitted (pro1)
+fitted (pro2)
+fitted(pro)
+
+x11();plot(pro2, plot.conf=FALSE,col="yellow", ylab="xxxx",xlab="año", main="", fcol="white", type="o")
+  lines(fitted(pro1), col="red", type="o")
+  lines(fitted(pro), col="blue", type="o")
+  lines(pro1$mean, col="red", type="o")
+  lines(pro2$mean, col="yellow", type="o")
+  lines(pro$mean,col="blue", type="o")
+  
+  legend("topleft",lty=1, col=c(1,"blue","red","yellow"),c("data", expression(mex), expression(df),pch=1))
+  
+  
+  
